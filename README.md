@@ -1,5 +1,7 @@
-# Microsoft Agent Framework: Hosting Agentic Workflows in Azure AI Foundry
-This repo provides a practical implementation of _Hosted Workflows_ using the **Azure AI SDK** for Python. It utilises the **Microsoft Agent Framework** declarative schema to define multi-agent orchestration (workflow). Unlike local workflows, hosted workflows are deployed directly to Azure AI Foundry, allowing them to be managed, versioned and executed within the Azure ecosystem.
+# Multi-Agent Orchestration: Hosted Workflows in Azure AI Foundry
+This repo provides a practical implementation of _Hosted Workflows_ using the **Azure AI SDK** for Python. It utilises the **Microsoft Agent Framework** declarative schema to define multi-agent orchestration (workflow).
+
+Unlike local workflows, hosted workflows are deployed directly to Azure AI Foundry, allowing them to be managed, versioned and executed within the Azure ecosystem.
 
 > [!WARNING]
 > To successfully run these notebooks, you must have an **Azure AI Foundry** project and **AI model deployment**. Please ensure you have the following environment variables set up in your system:
