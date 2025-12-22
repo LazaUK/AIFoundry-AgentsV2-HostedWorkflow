@@ -10,7 +10,7 @@ This repo provides a practical implementation of _Hosted Workflows_ using the **
 
 ## 📑 Table of Contents
 - [Use-Case Scenario: Code Review](#use-case-scenario-code-review)
-- [Code Sample: YAML Definition]()
+- [Code Sample: YAML Definition](#code-sample-yaml-definition)
 - [Code Sample: Python Script]()
 - [Deployment of Hosted Workflow]()
 - [Execution in Azure AI Foundry]()
@@ -23,27 +23,61 @@ This sample demonstrates a _Code Review_ workflow involving two specialised agen
 The workflow continues in a loop until the Reviewer provides the `approved` keyword, at which point the final solution is delivered then to the user.
 
 ## Code Sample: YAML Definition
-The workflow logic is defined declaratively in CodeReview.yaml. This file describes the triggers, variables, and the sequence of agent invocations using the InvokeAzureAgent action.
+The workflow logic is defined in `CodeReview.yaml` file, that describes the triggers, variables and the sequence of agent invocations.
+
+### 1.1 Workflow Trigger
+The workflow is initialised using the `OnConversationStart` trigger, that captures the user's input into a local variable (`Local.LatestMessage`) as the starting context for the agents.
 
 ``` YAML
 kind: workflow
 trigger:
   kind: OnConversationStart
+  id: trigger_wf
   actions:
-    - kind: InvokeAzureAgent
-      id: invoke_developer
-      agent: { name: DeveloperAgent }
-      # ... input/output mapping ...
-    - kind: InvokeAzureAgent
-      id: invoke_reviewer
-      agent: { name: ReviewerAgent }
-      # ... feedback loop logic ...
-    - kind: ConditionGroup
-      id: check_approved
-      conditions:
-        - condition: =!IsBlank(Find("approved", Lower(Last(Local.LatestMessage).Text)))
-          actions:
-            - kind: EndConversation
+    - kind: SetVariable
+      id: init_latest
+      variable: Local.LatestMessage
+      value: =UserMessage(System.LastMessageText)
+```
+
+### 1.2 Agent Invocation
+The logic utilises the `InvokeAzureAgent` action to call specific agents registered in Azure AI Foundry.
+- **DeveloperAgent**: receives the initial problem or previous feedback to generate code,
+- **ReviewerAgent**: analyses the developer's output to provide feedback or approval,
+
+Both agents map their outputs back to `Local.LatestMessage`, for the conversation state to persist across turns.
+
+``` YAML
+- kind: InvokeAzureAgent
+  id: invoke_developer
+  agent:
+    name: DeveloperAgent
+  conversationId: =System.ConversationId
+  input:
+    messages: =Local.LatestMessage
+  output:
+    messages: Local.LatestMessage
+    autoSend: true
+```
+
+### 1.3 Conditions and Looping
+To manage the _code review_ interactions, the workflow utilises a `ConditionGroup` logic.
+- **Approval Check**: A condition searches for the string "_approved_" within the reviewer's last message.
+- **Termination**: If approved, the workflow sends the final activity and ends the conversation.
+- **Looping**: If not approved, a `GotoAction` redirects the flow back to the `invoke_developer` step.
+
+``` YAML
+- kind: ConditionGroup
+  id: check_approved
+  conditions:
+    - id: if_approved
+      condition: =!IsBlank(Find("approved", Lower(Last(Local.LatestMessage).Text)))
+      actions:
+        - kind: EndConversation
+  elseActions:
+    - kind: GotoAction
+      id: loop_back
+      actionId: invoke_developer
 ```
 
 ## Code Sample: Python Script
