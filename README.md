@@ -9,7 +9,7 @@ This repo provides a practical implementation of _Hosted Workflows_ using the **
 > | `AZURE_FOUNDRY_GPT_MODEL`        | The name of the model deployment to be used by the agent, e.g., _gpt-4.1-mini_. |
 
 ## 📑 Table of Contents
-- [Use-Case Scenario: Code Review]()
+- [Use-Case Scenario: Code Review](#use-case-scenario-code-review)
 - [Code Sample: YAML Definition]()
 - [Code Sample: Python Script]()
 - [Deployment of Hosted Workflow]()
@@ -18,15 +18,14 @@ This repo provides a practical implementation of _Hosted Workflows_ using the **
 ## Use-Case Scenario: Code Review
 This sample demonstrates a _Code Review_ workflow involving two specialised agents:
 - **Developer Agent**: writes code to solve problems and may occasionally introduce bugs,
-- **Reviewer Agent**: checkss the code for style and correctness.
+- **Reviewer Agent**: checks the code for style and correctness.
 
-The workflow continues in a loop until the Reviewer provides the "`approved`" keyword, at which point the final solution is delivered back to the user.
+The workflow continues in a loop until the Reviewer provides the `approved` keyword, at which point the final solution is delivered then to the user.
 
-1. YAML Workflow Definition
+## Code Sample: YAML Definition
 The workflow logic is defined declaratively in CodeReview.yaml. This file describes the triggers, variables, and the sequence of agent invocations using the InvokeAzureAgent action.
 
-YAML
-
+``` YAML
 kind: workflow
 trigger:
   kind: OnConversationStart
@@ -45,7 +44,9 @@ trigger:
         - condition: =!IsBlank(Find("approved", Lower(Last(Local.LatestMessage).Text)))
           actions:
             - kind: EndConversation
-2. Python Implementation
+```
+
+## Code Sample: Python Script
 The hosted_workflow.py script acts as the deployment engine. It uses the AIProjectClient to register the agents and the workflow within your Azure project.
 
 2.1 Registering Agents
@@ -70,7 +71,8 @@ workflow_agent = project_client.agents.create_version(
     agent_name=workflow_definition["name"],
     definition=WorkflowAgentDefinition(workflow=workflow_yaml),
 )
-3. Deployment & Execution
+
+## Deployment of Hosted Workflow
 To deploy the workflow to your Azure AI Foundry project, run the following command. Ensure you have authenticated via the Azure CLI (az login) first.
 
 Bash
@@ -80,7 +82,8 @@ pip install azure-ai-projects azure-identity pyyaml
 
 # Run the deployment script
 python hosted_workflow.py CodeReview.yaml
-4. Visualisation in Azure AI Foundry
+
+## Execution in Azure AI Foundry
 Once deployed, you can manage and visualize your agents and workflows directly in the Azure AI Foundry portal:
 
 Agents Section: View the DeveloperAgent and ReviewerAgent, inspect their instructions, and test them individually.
