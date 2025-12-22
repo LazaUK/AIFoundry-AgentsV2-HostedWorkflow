@@ -126,7 +126,7 @@ To deploy your orchestration logic to Azure, you must execute the provided Pytho
 ### 3.1 Prerequisites
 Before running the deployment, install the necessary _Azure AI SDK_ and _Azure Identity_ libraries:
 
-``` Bash
+``` PowerShell
 pip install azure-ai-projects --pre
 pip install azure-identity pyyaml
 ```
@@ -134,7 +134,7 @@ pip install azure-identity pyyaml
 ### 3.2 Running the Deployment
 The script requires the path to your _YAML_ definition file as a command-line argument. If not provided, it defaults to **CodeReview.yaml**.
 
-``` Bash
+``` PowerShell
 python hosted_workflow.py CodeReview.yaml
 ```
 
