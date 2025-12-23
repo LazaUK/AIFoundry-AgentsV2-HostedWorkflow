@@ -4,7 +4,7 @@ This repo provides a practical implementation of _Hosted Workflows_ using the **
 Unlike local workflows, hosted workflows are deployed directly to Azure AI Foundry, allowing them to be managed, versioned and executed within the Azure ecosystem.
 
 > [!WARNING]
-> To successfully run these notebooks, you must have an **Azure AI Foundry** project and **AI model deployment**. Please ensure you have the following environment variables set up in your system:
+> To successfully run this code, you must have access to an **Azure AI Foundry** project and **AI model deployment**. Please ensure you have the following environment variables set up in your system:
 > | Environment Variable             | Description                                                                            |
 > | -------------------------------- | -------------------------------------------------------------------------------------- |
 > | `AZURE_FOUNDRY_PROJECT_ENDPOINT` | The endpoint URL for your Azure AI Foundry project.                                    |
